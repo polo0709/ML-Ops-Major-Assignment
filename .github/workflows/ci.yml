@@ -12,7 +12,11 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
+<<<<<<< HEAD
           python-version: '3.11'
+=======
+          python-version: '3.9'
+>>>>>>> 62deb3a3d39d3c0988c93924b534b828ca81e717
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
