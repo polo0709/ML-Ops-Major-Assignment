@@ -62,7 +62,7 @@ This project implements a complete MLOps pipeline focused on training, testing, 
 
 
 
-| Metric                     | Original Model (`unquant\_params.joblib`)  | Quantized Model (`quant\_params.joblib`)  |
+| Metric                     | Original Model                            | Quantized Model                          |
 
 |--------------------------- |-------------------------------------------|------------------------------------------|
 
