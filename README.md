@@ -1,4 +1,4 @@
-\# 🧠 MLOps Pipeline: Linear Regression on California Housing
+\# MLOps Pipeline: Linear Regression on California Housing
 
 
 
@@ -10,7 +10,7 @@ This project implements a complete MLOps pipeline focused on training, testing, 
 
 
 
-\## 🚀 Pipeline Overview
+\## Pipeline Overview
 
 
 
@@ -58,19 +58,19 @@ This project implements a complete MLOps pipeline focused on training, testing, 
 
 
 
-\## 📊 Quantization Comparison Table
+\## Quantization Comparison Table
 
 
 
-| Metric                     | Original Model (`unquant\_params.joblib`) | Quantized Model (`quant\_params.joblib`) |
+| Metric                     | Original Model (`unquant\_params.joblib`)  | Quantized Model (`quant\_params.joblib`)  |
 
-|---------------------------|-------------------------------------------|------------------------------------------|
+|--------------------------- |-------------------------------------------|------------------------------------------|
 
-| R² Score                  | 0.6027                                    | 0.6026                                   |
+| R² Score                   | 0.6027                                    | 0.6026                                   |
 
-| Model Size (KB)           | 0.40 KB                                   | 0.32 KB                                  |
+| Model Size (KB)            | 0.40 KB                                   | 0.32 KB                                  |
 
-| Size Reduction (%)        | –                                         | ~50% smaller                             |
+| Size Reduction (%)         | –                                         | ~50% smaller                             |
 
 
 
@@ -80,7 +80,7 @@ This project implements a complete MLOps pipeline focused on training, testing, 
 
 
 
-\## 🐳 Run with Docker
+\## Run with Docker
 
 
 
