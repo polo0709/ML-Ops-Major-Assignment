@@ -60,8 +60,6 @@ This project implements a complete MLOps pipeline focused on training, testing, 
 
 \## Quantization Comparison Table
 
-
-
 | Metric              | Original Model         | Quantized Model        |
 
 |---------------------|------------------------|------------------------|
@@ -71,8 +69,6 @@ This project implements a complete MLOps pipeline focused on training, testing, 
 | Model Size (KB)     | 0.40 KB                | 0.32 KB                |
 
 | Size Reduction (%)  | –                      | ~50% smaller           |
-
-
 
 ---
 
