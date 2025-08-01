@@ -70,17 +70,13 @@ This project implements a complete MLOps pipeline focused on training, testing, 
 
 | Size Reduction (%)  | –                      | ~50% smaller           |
 
----
-
----
-
 
 
 \## Run with Docker
 
 
 
-```bash
+bash
 
 docker build -t mlops-lr .
 
