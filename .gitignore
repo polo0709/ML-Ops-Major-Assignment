@@ -1,0 +1,42 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Jupyter Notebooks (if any)
+*.ipynb_checkpoints
+
+# Logs and outputs
+*.log
+*.out
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Model files
+*.joblib
+unquant_params.joblib
+quant_params.joblib
+model.joblib
+
+# Docker
+*.tar
+*.pid
+
+# pytest
+.cache/
+.pytest_cache/
+
+# CI/CD artifacts
+.github/workflows/*.log
