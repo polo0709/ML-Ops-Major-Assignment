@@ -59,24 +59,23 @@ This project implements a complete MLOps pipeline focused on training, testing, 
 
 
 \## Quantization Comparison Table
+| Metric             | Original Model | Quantized Model |
 
-| Metric              | Original Model         | Quantized Model        |
+| ------------------ | -------------- | --------------- |
 
-|---------------------|------------------------|------------------------|
+| R² Score           | 0.6027         | 0.6026          |
 
-| R² Score            | 0.6027                 | 0.6026                 |
+| Model Size (KB)    | 0.40 KB        | 0.32 KB         |
 
-| Model Size (KB)     | 0.40 KB                | 0.32 KB                |
+| Size Reduction (%) | –              | \\~20% smaller   |
 
-| Size Reduction (%)  | –                      | ~50% smaller           |
+
 
 
 
 \## Run with Docker
 
 
-
-bash
 
 docker build -t mlops-lr .
 
