@@ -1,127 +1,184 @@
-\# MLOps Pipeline: Linear Regression on California Housing
+\# MLOps Linear Regression Assignment
 
 
 
-This project implements a complete MLOps pipeline focused on training, testing, quantization, Dockerization, and CI/CD for a \*\*Linear Regression model\*\* using the \*\*California Housing dataset\*\*.
+This project demonstrates a complete MLOps pipeline for training, evaluating, containerizing, and quantizing a linear regression model using the California Housing dataset.
 
 
 
----
+\## Project Structure
 
 
 
-\## Pipeline Overview
+```
+
+.
+
+├── src/
+
+│   ├── train.py               # Model training and saving
+
+│   ├── predict.py             # Inference using saved model
+
+│   ├── quantize.py            # Quantization using uint8 (per-feature scale)
+
+│   ├── test\_train.py          # Unit tests
+
+│   ├── utils.py               # Utility functions (data load, split, evaluate)
+
+├── Dockerfile                 # Docker setup for deployment
+
+├── requirements.txt
+
+├── .github/workflows/ci.yml  # GitHub Actions CI/CD pipeline
+
+├── model.joblib              # Trained model
+
+├── quant\_params.joblib       # Quantized model
+
+├── README.md                 # Project overview and results
+
+```
 
 
 
-1\. \*\*Model Training\*\* (`train.py`)
-
-&nbsp;  - Trains a `LinearRegression` model using scikit-learn.
-
-&nbsp;  - Evaluates R² score and saves model as `model.joblib`.
+\## Features
 
 
 
-2\. \*\*Model Testing\*\* (`test\_train.py`)
+\- Trains a `LinearRegression` model using `scikit-learn`
 
-&nbsp;  - Unit tests for model existence, type, training completeness, and minimum accuracy.
+\- Saves and loads model using `joblib`
 
+\- Manual quantization using `uint8` with \*\*per-coefficient scale factors\*\*
 
+\- R² score and model size comparison
 
-3\. \*\*Manual Quantization\*\* (`quantize.py`)
+\- Packaged in a Docker container
 
-&nbsp;  - Applies `float16` quantization to model weights.
-
-&nbsp;  - Saves quantized weights and runs inference.
-
-
-
-4\. \*\*Prediction\*\* (`predict.py`)
-
-&nbsp;  - Loads model and runs predictions on test data.
-
-
-
-5\. \*\*Dockerization\*\*
-
-&nbsp;  - The pipeline is containerized with a `Dockerfile` to allow portable execution.
-
-
-
-6\. \*\*CI/CD\*\*
-
-&nbsp;  - GitHub Actions is used to automate testing, training, quantization, and Docker image verification.
-
-
-
----
+\- CI/CD pipeline using GitHub Actions
 
 
 
 \## Quantization Comparison Table
+
+
+
 | Metric             | Original Model | Quantized Model |
 
-| ------------------ | -------------- | --------------- |
+|--------------------|----------------|-----------------|
 
-| R² Score           | 0.6027         | 0.6026          |
+| R² Score           | 0.5838         | 0.5838          |
 
-| Model Size (KB)    | 0.40 KB        | 0.32 KB         |
+| Model Size (KB)    | 0.04 KB        | 0.01 KB         |
 
-| Size Reduction (%) | –              | \\~20% smaller   |
-
-
+| Size Reduction (%) | –              | 75.00% smaller  |
 
 
 
-\## Run with Docker
+>  Quantization used: `uint8` with individual scale factors per coefficient  
+
+>  Focus: Achieve balance between model size and accuracy
+
+
+
+\## How to Run
+
+
+
+\### Train the model
+
+```bash
+
+python src/train.py
+
+```
+
+
+
+\### Run tests
+
+```bash
+
+pytest src/test\_train.py
+
+```
+
+
+
+\### Run prediction
+
+```bash
+
+python src/predict.py
+
+```
+
+
+
+\### Quantize the model
+
+```bash
+
+python src/quantize.py
+
+```
+
+
+
+\### Build Docker Image
 
 
 
 docker build -t mlops-lr .
 
-docker run mlops-lr
 
 
 
-\## Project Directory
+
+\## CI/CD Pipeline
 
 
 
-mlops-lr-assignment/
-
-│
-
-├── Dockerfile
-
-├── requirements.txt
-
-├── model.joblib
-
-│
-
-├── src/
-
-│   ├── train.py
-
-│   ├── quantize.py
-
-│   └── predict.py
-
-│
-
-├── tests/
-
-│   └── test\_train.py
-
-│
-
-└── .github/
-
-&nbsp;   └── workflows/
-
-&nbsp;       └── ci.yml
+This project uses GitHub Actions to automate:
 
 
+
+\- Model training and quantization
+
+\- Unit tests
+
+\- Docker build and validation
+
+
+
+Workflow defined in `.github/workflows/ci.yml`.
+
+
+
+\## Dependencies
+
+
+
+```
+
+scikit-learn
+
+numpy
+
+joblib
+
+```
+
+
+
+Install with:
+
+```bash
+
+pip install -r requirements.txt
+
+```
 
 
 

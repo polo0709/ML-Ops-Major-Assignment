@@ -1,51 +1,86 @@
 import joblib
 import numpy as np
-import os
-from sklearn.datasets import fetch_california_housing
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score
+from sklearn.linear_model import LinearRegression
+from utils import load_data, split_data, evaluate_model
+from sklearn.metrics import r2_score, mean_squared_error
 
-# Load trained model
-model = joblib.load("model.joblib")
-coef = model.coef_
-intercept = model.intercept_
 
-# Save unquantized model parameters
-unquant_file = "unquant_params.joblib"
-joblib.dump({"coef": coef, "intercept": intercept}, unquant_file)
+def quantize_coefficients_uint8(arr):
+    """Min-max quantization of each coefficient using uint8 (asymmetric)."""
+    q = np.zeros_like(arr, dtype=np.uint8)
+    scales = np.zeros_like(arr, dtype=np.float32)
+    mins = np.zeros_like(arr, dtype=np.float32)
 
-# Evaluate R² score with original model
-data = fetch_california_housing()
-X_train, X_test, y_train, y_test = train_test_split(data.data, data.target)
-y_pred = model.predict(X_test)
-original_r2 = r2_score(y_test, y_pred)
+    for i, val in enumerate(arr):
+        min_val = val  # Scalar, since it's a single coefficient
+        max_val = val
+        if abs(val) < 1e-8:
+            scale = 1.0  # avoid divide-by-zero
+        else:
+            scale = (max_val - min_val) / 255.0
 
-# Measure original model size
-original_size = os.path.getsize(unquant_file) / 1024  # in KB
+        q[i] = 0  # constant value, since max == min
+        scales[i] = scale
+        mins[i] = min_val
+    return q, scales, mins
 
-# -------------------- Quantization: float16 --------------------
-quant_coef = coef.astype(np.float16)
-quant_intercept = np.float16(intercept)
 
-quant_file = "quant_params.joblib"
-joblib.dump({"coef": quant_coef, "intercept": quant_intercept}, quant_file)
+def dequantize_coefficients_uint8(q, scales, mins):
+    """Dequantize from uint8."""
+    return q.astype(np.float32) * scales + mins
 
-# Measure quantized model size
-quant_size = os.path.getsize(quant_file) / 1024  # in KB
 
-# -------------------- Dequantization & Inference --------------------
-# Cast back to float64 for inference
-dequant_coef = quant_coef.astype(np.float64)
-dequant_intercept = float(quant_intercept)
+def memory_size(arr):
+    return arr.nbytes / 1024
 
-# Manual inference
-y_pred_quant = np.dot(X_test, dequant_coef) + dequant_intercept
-quant_r2 = r2_score(y_test, y_pred_quant)
 
-# -------------------- Reporting --------------------
-print(" Quantization Summary (float16):")
-print(f" R² Score (Original):     {original_r2:.4f}")
-print(f" R² Score (Quantized):    {quant_r2:.4f}")
-print(f" Model Size (Original):   {original_size:.2f} KB")
-print(f" Model Size (Quantized):  {quant_size:.2f} KB")
-print(f" Size Reduction:          {(100 * (original_size - quant_size) / original_size):.2f}%")
+def main():
+    # Load model
+    model: LinearRegression = joblib.load("model.joblib")
+    coef = model.coef_.astype(np.float32)
+    intercept = np.array([model.intercept_], dtype=np.float32)
+
+    # Save original params
+    joblib.dump({"coef": coef, "intercept": intercept}, "unquant_params.joblib")
+
+    # Quantize coefficients
+    q_coef, scales_coef, mins_coef = quantize_coefficients_uint8(coef)
+    q_intercept, scales_intercept, mins_intercept = quantize_coefficients_uint8(intercept)
+
+    joblib.dump({
+        "q_coef": q_coef,
+        "scales_coef": scales_coef,
+        "mins_coef": mins_coef,
+        "q_intercept": q_intercept,
+        "scales_intercept": scales_intercept,
+        "mins_intercept": mins_intercept,
+    }, "quant_params.joblib")
+
+    # Memory
+    orig_mem = memory_size(coef) + memory_size(intercept)
+    quant_mem = memory_size(q_coef) + memory_size(q_intercept)
+    print("\n✅ Quantization Summary (uint8 per-weight min-max):")
+    print(f"Model Size (Original):   {orig_mem:.2f} KB")
+    print(f"Model Size (Quantized):  {quant_mem:.2f} KB")
+    print(f"Size Reduction:          {(100 * (orig_mem - quant_mem) / orig_mem):.2f}%")
+
+    # Evaluate
+    X, y = load_data()
+    _, X_test, _, y_test = split_data(X, y)
+    r2_orig, mse_orig = evaluate_model(model, X_test, y_test)
+
+    deq_coef = dequantize_coefficients_uint8(q_coef, scales_coef, mins_coef)
+    deq_intercept = dequantize_coefficients_uint8(q_intercept, scales_intercept, mins_intercept)[0]
+    preds = X_test @ deq_coef + deq_intercept
+    r2_q = r2_score(y_test, preds)
+    mse_q = mean_squared_error(y_test, preds)
+
+    print("\n📊 Evaluation Metrics:")
+    print(f"Original R²:     {r2_orig:.4f}, MSE: {mse_orig:.4f}")
+    print(f"Quantized R²:    {r2_q:.4f}, MSE: {mse_q:.4f}")
+    print("\nSample quantized coefficients:", q_coef[:5])
+    print("Sample predictions:", preds[:5])
+
+
+if __name__ == "__main__":
+    main()
