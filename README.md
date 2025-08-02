@@ -64,15 +64,11 @@ This project demonstrates a complete MLOps pipeline for training, evaluating, co
 
 
 
-| Metric             | Original Model | Quantized Model |
-
-|--------------------|----------------|-----------------|
-
-| R² Score           | 0.5838         | 0.5838          |
-
-| Model Size (KB)    | 0.04 KB        | 0.01 KB         |
-
-| Size Reduction (%) | –              | 75.00% smaller  |
+| Metric             | Original Model | Quantized Model   |
+|--------------------|----------------|-------------------|
+| R² Score           | 0.5838         | 0.5838            |
+| Model Size (KB)    | 0.04 KB        | 0.01 KB           |
+| Size Reduction (%) | –              | 75.00% smaller    |
 
 
 
